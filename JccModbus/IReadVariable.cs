@@ -13,5 +13,11 @@ namespace JccModbus
         bool ReadCoil(string address);
 
         bool[] ReadCoil(string address, ushort length);
+
+        //byte[] ReadRegisterBack(byte[] modbus, string addressHead);
+
+
+
+
     }
 }

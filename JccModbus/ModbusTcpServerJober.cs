@@ -116,13 +116,27 @@ namespace JccModbus
                         for(int i=0;i<readPoolKeys.Count;i++) 
                         {
                             IReadVariable readVariable = new ModbusTcpReader(this.modbusTcpServer);
-                            bool isCoil =  readVariable.ReadCoil(readPoolKeys[i]);
-                            readPool[]
 
-                            JccVariableValue variableValue = new JccVariableValue()
+                            switch (readPool[readPoolKeys[i]].Def.ModbusDataType)
                             {
-                                Def = new JccVariableDef();
-                            };
+                                case ModbusDataType.Coils:
+                                    {
+                                        bool isCoil = readVariable.ReadCoil(readPoolKeys[i]);
+                                        readPool[readPoolKeys[i]].Value = isCoil;
+                                        break;
+                                    }
+                                case ModbusDataType.Discrete:
+                                    {
+                                        bool isCoil = readVariable.ReadDiscrete(readPoolKeys[i]);
+                                        readPool[readPoolKeys[i]].Value = isCoil;
+                                        break;
+                                    }
+                                case ModbusDataType.InputRegisters:
+                                    break;
+                                case ModbusDataType.HoldRegisters: 
+                                    break;
+                            }
+                            
                             
                         }
                     }

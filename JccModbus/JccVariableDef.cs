@@ -14,6 +14,8 @@ namespace JccModbus
 
         public JccDataType DataType { get; set; }
 
+        public ModbusDataType ModbusDataType { get; set; }
+
         public ModbusProtocol Protocol { get; set; }
 
         public bool IsBit { get; set; }
