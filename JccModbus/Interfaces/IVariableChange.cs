@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace JccModbus
+namespace JccModbus.Interfaces
 {
     public interface IVariableChange
     {

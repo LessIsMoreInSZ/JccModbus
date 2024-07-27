@@ -1,4 +1,5 @@
 ﻿using HslCommunication.ModBus;
+using JccModbus.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;

@@ -1,4 +1,5 @@
 ﻿using HslCommunication.ModBus;
+using JccModbus.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,9 +7,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace JccModbus
+namespace JccModbus.Tasks
 {
-    public  class ModbusTcpJober:IConnect, IVariableChange
+    public class ModbusTcpJober : IConnect, IVariableChange
     {
         private ModbusTcpServer modbusTcpServer;
 
@@ -18,11 +19,11 @@ namespace JccModbus
         {
             get
             {
-                return this.modbusTcpServerConnectParam;
+                return modbusTcpServerConnectParam;
             }
             set
             {
-                this.modbusTcpServerConnectParam = value;
+                modbusTcpServerConnectParam = value;
             }
         }
 
@@ -51,11 +52,11 @@ namespace JccModbus
         /// <returns></returns>
         public List<JccVariableDef> GetVariables()
         {
-            object obj = this.plcLock;
+            object obj = plcLock;
             List<JccVariableValue> list;
             lock (obj)
             {
-                list = this.readPool.Values.ToList<JccVariableValue>();
+                list = readPool.Values.ToList();
             }
             List<JccVariableDef> list2 = new List<JccVariableDef>();
             foreach (JccVariableValue ltVariableValue in list)
@@ -67,7 +68,7 @@ namespace JccModbus
 
         public void CheckVariableDef(JccVariableDef def)
         {
-            if(def== null) throw new ArgumentNullException("JccVariableDef");
+            if (def == null) throw new ArgumentNullException("JccVariableDef");
             if (string.IsNullOrWhiteSpace(def.VarId))
             {
                 throw new ArgumentNullException(def.VarId + " is invalid");
@@ -76,12 +77,12 @@ namespace JccModbus
 
         public void Connect()
         {
-            this.CheckAndReconnect();
+            CheckAndReconnect();
         }
 
         private void CheckParameters()
         {
-            if (this.ModbusTcpServerConnectParam.port==0)
+            if (ModbusTcpServerConnectParam.port == 0)
             {
                 throw new ArgumentException("EndPointUrl is needed.");
             }
@@ -92,30 +93,30 @@ namespace JccModbus
             CheckParameters();
             modbusTcpServer = new ModbusTcpServer();
             modbusTcpServer.ServerStart(modbusTcpServerConnectParam.port, true);
-            Task.Run(new Action(this.ReadVariable));
+            Task.Run(new Action(ReadVariable));
 
         }
 
         private void ReadVariable()
         {
-            while(true)
+            while (true)
             {
-                if (this.modbusConnectStatus != ModbusConnectStatus.Connected)
+                if (modbusConnectStatus != ModbusConnectStatus.Connected)
                 {
                     Thread.Sleep(1000);
                 }
                 else
                 {
-                    object obj = this.plcLock;
+                    object obj = plcLock;
                     List<JccVariableDefError> errorList = new List<JccVariableDefError>();
 
                     //if (this.readPool.Count <= 0) { continue; }
 
                     lock (obj)
                     {
-                        for(int i=0;i<readPoolKeys.Count;i++) 
+                        for (int i = 0; i < readPoolKeys.Count; i++)
                         {
-                            IReadVariable readVariable = new ModbusTcpReader(this.modbusTcpServer);
+                            IReadVariable readVariable = new ModbusTcpReader(modbusTcpServer);
 
                             switch (readPool[readPoolKeys[i]].Def.ModbusDataType)
                             {
@@ -133,11 +134,11 @@ namespace JccModbus
                                     }
                                 case ModbusDataType.InputRegisters:
                                     break;
-                                case ModbusDataType.HoldRegisters: 
+                                case ModbusDataType.HoldRegisters:
                                     break;
                             }
-                            
-                            
+
+
                         }
                     }
                 }
@@ -176,31 +177,31 @@ namespace JccModbus
 
         public void Register(JccVariableDef varDef)
         {
-            this.CheckVariableDef(varDef);
-            object obj = this.plcLock;
+            CheckVariableDef(varDef);
+            object obj = plcLock;
             lock (obj)
             {
-                if (this.readPool.ContainsKey(varDef.VarId))
+                if (readPool.ContainsKey(varDef.VarId))
                 {
                     throw new Exception("duplicate register");
                 }
-                this.readPool.Add(varDef.VarId, new JccVariableValue(varDef, null));
-                this.readPoolKeys.Add(varDef.VarId);
+                readPool.Add(varDef.VarId, new JccVariableValue(varDef, null));
+                readPoolKeys.Add(varDef.VarId);
             }
         }
 
         public void UnRegister(JccVariableDef varDef)
         {
-            this.CheckVariableDef(varDef);
-            object obj = this.plcLock;
+            CheckVariableDef(varDef);
+            object obj = plcLock;
             lock (obj)
             {
-                if (!this.readPool.ContainsKey(varDef.VarId))
+                if (!readPool.ContainsKey(varDef.VarId))
                 {
                     throw new Exception("duplicate register");
                 }
-                this.readPool.Remove(varDef.VarId);
-                this.readPoolKeys.Remove(varDef.VarId);
+                readPool.Remove(varDef.VarId);
+                readPoolKeys.Remove(varDef.VarId);
             }
         }
         #endregion

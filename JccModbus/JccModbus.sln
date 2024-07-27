@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JccModbus", "JccModbus.csproj", "{3469BF41-FA11-4C0B-8E94-A8EB3898F590}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JccModbus", "JccModbus.csproj", "{3469BF41-FA11-4C0B-8E94-A8EB3898F590}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestJccModbus", "..\TestJccModbus\TestJccModbus.csproj", "{467820E6-B48D-487A-B1C7-8915A70BE321}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{3469BF41-FA11-4C0B-8E94-A8EB3898F590}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3469BF41-FA11-4C0B-8E94-A8EB3898F590}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3469BF41-FA11-4C0B-8E94-A8EB3898F590}.Release|Any CPU.Build.0 = Release|Any CPU
+		{467820E6-B48D-487A-B1C7-8915A70BE321}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{467820E6-B48D-487A-B1C7-8915A70BE321}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{467820E6-B48D-487A-B1C7-8915A70BE321}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{467820E6-B48D-487A-B1C7-8915A70BE321}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
