@@ -6,6 +6,10 @@ namespace JccModbus
 {
     public class ModbusTcpServerConnectParam:ModbusConnectParam
     {
+        public ModbusTcpServerConnectParam()
+        {
+            
+        }
         public ModbusTcpServerConnectParam(int port)
         {
             this.port = port;

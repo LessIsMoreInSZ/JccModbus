@@ -13,7 +13,7 @@ namespace JccModbus.Tasks
     {
         private ModbusTcpServer modbusTcpServer;
 
-        private ModbusTcpServerConnectParam modbusTcpServerConnectParam;
+        private ModbusTcpServerConnectParam modbusTcpServerConnectParam = new ModbusTcpServerConnectParam();
 
         public ModbusTcpServerConnectParam ModbusTcpServerConnectParam
         {
@@ -40,11 +40,13 @@ namespace JccModbus.Tasks
         private readonly Dictionary<string, JccVariableDefError> errorDefs = new Dictionary<string, JccVariableDefError>();
 
         #region Realize IConnect IVariableChange
-        public ModbusConnectStatus ConnectionStatus => throw new NotImplementedException();
+        //public ModbusConnectStatus ConnectionStatus;
 
-        public Action<JccVariableDef, JccVariableValue> OnVariableChange { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public Action<ModbusConnectStatus> OnConnectStatusChange { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public Action<List<JccVariableDefError>> OnVariableDefError { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public Action<JccVariableDef, JccVariableValue> OnVariableChange { get; set; }
+        public Action<ModbusConnectStatus> OnConnectStatusChange { get; set; }
+        public Action<List<JccVariableDefError>> OnVariableDefError { get; set; }
+
+        ModbusConnectStatus IConnect.ConnectionStatus => throw new NotImplementedException();
 
         /// <summary>
         /// copy the readPool
@@ -78,6 +80,9 @@ namespace JccModbus.Tasks
         public void Connect()
         {
             CheckAndReconnect();
+
+            // 20240728 jyj 假设默认连接成功
+            modbusConnectStatus = ModbusConnectStatus.Connected;
         }
 
         private void CheckParameters()
@@ -97,7 +102,7 @@ namespace JccModbus.Tasks
 
         }
 
-        private void ReadVariable()
+        private async void ReadVariable()
         {
             while (true)
             {
@@ -114,7 +119,7 @@ namespace JccModbus.Tasks
 
                     lock (obj)
                     {
-                        for (int i = 0; i < readPoolKeys.Count; i++)
+                        for (int i = 0; i < readPoolKeys.Count; ++i)
                         {
                             IReadVariable readVariable = new ModbusTcpReader(modbusTcpServer);
 
@@ -122,8 +127,23 @@ namespace JccModbus.Tasks
                             {
                                 case ModbusDataType.Coils:
                                     {
-                                        bool isCoil = readVariable.ReadCoil(readPoolKeys[i]);
-                                        readPool[readPoolKeys[i]].Value = isCoil;
+                                        bool newValue = readVariable.ReadCoil(readPoolKeys[i]);
+                                        if(readPool[readPoolKeys[i]].Value!=null&&bool.Parse(readPool[readPoolKeys[i]].Value.ToString())!= newValue)
+                                        {
+                                            Action<JccVariableDef, JccVariableValue> onVariableChange = this.OnVariableChange;
+                                            if (onVariableChange == null)
+                                            {
+                                                return;
+                                            }
+                                            readPool[readPoolKeys[i]].Value = newValue;
+                                            onVariableChange(readPool[readPoolKeys[i]].Def, readPool[readPoolKeys[i]]);
+
+                                            //Task.Run(delegate ()
+                                            //{
+                                               
+                                            //});
+                                        }
+                                        readPool[readPoolKeys[i]].Value = newValue;
                                         break;
                                     }
                                 case ModbusDataType.Discrete:
@@ -141,6 +161,8 @@ namespace JccModbus.Tasks
 
                         }
                     }
+
+                    await Task.Delay(1000);
                 }
             }
         }
