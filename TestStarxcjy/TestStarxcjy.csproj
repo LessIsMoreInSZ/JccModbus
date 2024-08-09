@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Starxcjy.DataAccess.PlcModBusAccess.Core" Version="24.8.5.424" />
+    <PackageReference Include="Starxcjy.DataAccess.PlcModBusAccess.Core" Version="24.8.9.434" />
   </ItemGroup>
 
 </Project>

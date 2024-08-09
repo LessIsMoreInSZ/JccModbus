@@ -13,10 +13,10 @@ serviceDescriptors.AddTransient<TcpChannelClient>();
 //serviceDescriptors.AddTransient<ModBusClientChannel<ModbusOption>>();
 //serviceDescriptors.AddTransient<ModBusServerChannel<ModbusMessage, ModbusOption, ModbusService>>();
 serviceDescriptors.AddLogging(d => d.AddConsole());
-await ServerMode(serviceDescriptors);
-await ClientMode(serviceDescriptors);
-//await ModbusServerMode(serviceDescriptors);
-//await ModbusClientMode(serviceDescriptors);
+//await ServerMode(serviceDescriptors);
+//await ClientMode(serviceDescriptors);
+await ModbusServerMode(serviceDescriptors);
+await ModbusClientMode(serviceDescriptors);
 async static Task ServerMode(ServiceCollection serviceDescriptors)
 {
     var p = serviceDescriptors.BuildServiceProvider();
